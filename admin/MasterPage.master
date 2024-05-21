@@ -1,0 +1,110 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="admin_MasterPage" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <title><%: Page.Title %> - Footwear Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <style>
+        #items0, #items1, #item4, #items4, #items2, #items3, #items5 {
+            text-align: center;
+            font-size: x-large;
+            font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+        }
+
+        #logout, #admin {
+            float: right;
+        }
+
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            color: white;
+            text-align: center;
+        }
+
+        #d2, #d3, #d4, #d5 {
+            text-align: center;
+            font-size: x-large;
+            font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+        }
+    </style>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <section>
+        <div class="w3-sidebar w3-light-grey w3-bar-block" style="width: 15%">
+            <h3 id="item4" class="w3-bar-item"><span>
+                <img src="../images/item-8.jpg" width="40" /></span>Footwear</h3>
+            <a href="Default.aspx" id="items0" class="w3-bar-item w3-button"><span><i class="fa fa-home"></i>&nbsp;</span>Home</a>
+            <a href="customer.aspx" id="items1" class="w3-bar-item w3-button"><span><i class="fa fa-user"></i>&nbsp;</span>Customer</a>
+            <a href="product.aspx" id="items2" class="w3-bar-item w3-button"><span><i class="fa fa-product-hunt"></i>&nbsp;</span>Product</a>
+            <div class="w3-dropdown-hover">
+                <a href="category.aspx" id="items3" class="w3-bar-item w3-button"><span><i class="fa fa-list"></i>&nbsp;</span>Category</a>
+                <div class="w3-dropdown-content w3-bar-block w3-card-4">
+                    <a class="w3-bar-item  w3-light-grey w3-button" id="d2" href="subcategory.aspx">Sub Category</a>
+                    <a class="w3-bar-item  w3-light-grey w3-button" id="d3" href="brand.aspx">Brand</a>
+                </div>
+            </div>
+
+            <a href="stock.aspx" id="items4" class="w3-bar-item w3-button"><span><i class="fa fa-stack-overflow"></i>&nbsp;</span>Stock</a>
+            <a href="order.aspx" id="items5" class="w3-bar-item w3-button"><span><i class="fa fa-sellsy"></i>&nbsp;</span>Order</a>
+        </div>
+        <!-- Page Content -->
+        <div style="margin-left: 15%">
+
+            <div class="w3-container w3-light-grey">
+
+                <h2 style="text-align: center; font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;">Footwear Shop Management System
+             <%if (Session["useremail"] != null)
+                 {
+
+
+             %>
+
+
+                    <a href="../logout.aspx"><span id="logout">
+                        <img src="../images/logout.png" width="40" /></span></a>&nbsp;<a href="profile.aspx"><span style="float: right;"><%=Session["profilename"] %></span></a>
+                    <%
+                        }
+                        else
+                        {
+                            Response.Redirect("../login.aspx");
+                        }
+
+
+                    %>
+                </h2>
+            </div>
+
+            <form id="form1" runat="server">
+                <div>
+                    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                    </asp:ContentPlaceHolder>
+                </div>
+            </form>
+
+
+
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="w3-container w3-light-grey footer">
+
+            <p>© 2022 Copyright: <a href="Default.aspx">WWW.FOOTWEARSHOP.COM</a></p>
+        </div>
+    </section>
+</body>
+</html>

@@ -1,0 +1,99 @@
+﻿using iTextSharp.text.html.simpleparser;
+using iTextSharp.text.pdf;
+using iTextSharp.text;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class admin_genratebill : System.Web.UI.Page
+{
+    SqlConnection con = new SqlConnection("Data Source=RAVIAVAIYA\\SQLEXPRESS;Initial Catalog=project;Integrated Security=True");
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (Session["useremail"] == null)
+        {
+            Response.Redirect("login.aspx");
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Request.QueryString["order_id"]))
+            {
+                string order_id = Request.QueryString["order_id"];
+
+                con.Close();
+                con.Open();
+
+                SqlCommand selectUser = new SqlCommand("select * from tbl_order where order_id='" + order_id + "'", con);
+                SqlDataReader dr = selectUser.ExecuteReader();
+                if (dr.Read())
+                {
+                    DateTime currentDate = DateTime.Now;
+                    //string id = dr["p_id"].ToString();
+                    //Session["pid"] = id;
+                    String fname = dr["fname"].ToString();
+                    String lname = dr["lname"].ToString();
+                    lblcustomername.Text = fname + " " + lname;
+                    lbladdress.Text = dr["address"].ToString();
+                    lblcontact.Text = dr["contact"].ToString();
+                    lblorder_id.Text = dr["order_id"].ToString();
+                    lblemail.Text = dr["email"].ToString();
+                    lbldate.Text = currentDate.ToString();
+
+
+
+                }
+
+                dr.Close();
+                String u_id = Session["u_id"].ToString();
+                SqlCommand cmd = new SqlCommand("SELECT tbl_order_item.o_i_id, tbl_product.p_id, tbl_product.pname, tbl_product.image, tbl_product.brand, tbl_product.price, tbl_order_item.size, tbl_order_item.color, tbl_order_item.quantity  FROM tbl_order_item INNER JOIN tbl_product ON tbl_order_item.p_id=tbl_product.p_id where order_id='" + order_id + "'", con);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    DataTable dt = new DataTable();
+                    dt.Load(reader);
+                    view_order_details.DataSource = dt;
+                    view_order_details.DataBind();
+                    decimal totalAmount = dt.AsEnumerable().Sum(row => Convert.ToDecimal(row["price"]) * row.Field<int>("quantity"));
+                    lblamount1.Text = string.Format("&#8377;{0}.00", totalAmount);
+                    lblamount.Text = string.Format("&#8377;{0}.00", totalAmount);
+
+                }
+                reader.Close();
+                con.Close();
+
+            }
+        }
+    }
+
+
+    protected void btnprint_Click(object sender, EventArgs e)
+    {
+        Response.ContentType = "application/pdf";
+        Response.AddHeader("Content-Disposition", "attachement; filename=Invoice.pdf");
+        Response.Cache.SetCacheability(HttpCacheability.NoCache);
+        StringWriter sw = new StringWriter();
+        HtmlTextWriter hw = new HtmlTextWriter(sw);
+        DivToPrint.RenderControl(hw);
+        Document doc = new Document(PageSize.A4, 50f, 50f, 30f, 30f);
+        HTMLWorker htw = new HTMLWorker(doc);
+        PdfWriter.GetInstance(doc, Response.OutputStream);
+        doc.Open();
+        StringReader sr = new StringReader(sw.ToString());
+        htw.Parse(sr);
+        doc.Close();
+        Response.Write(doc);
+        Response.End();
+    }
+
+    public override void VerifyRenderingInServerForm(Control control)
+    {
+
+    }
+}
